@@ -1,0 +1,7 @@
+# code provided for the assignment
+streamer/
+
+# don't include instructions in remote
+problem/
+
+.DS_Store
