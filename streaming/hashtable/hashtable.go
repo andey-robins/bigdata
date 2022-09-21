@@ -3,6 +3,7 @@ package hashtable
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"math"
 )
 
@@ -65,6 +66,7 @@ func (h *Hashtable) Insert(key string, value int) error {
 // Should return an error if the key doesn't already exist.
 func (h *Hashtable) Update(key string, value int) error {
 	addr := getHashedKey(key, h.truncLength, h.hashFunc)
+	// fmt.Printf("for key=%v, hash=%v, val=%v\n", key, addr, value)
 	if !keyExists(&h.table[addr], key) {
 		return errors.New("key does not exist")
 	}
@@ -100,19 +102,31 @@ func (h *Hashtable) Get(key string) (int, error) {
 	}
 }
 
+// Print will output the key and value for every existing entry in the table
+func (h *Hashtable) Print() string {
+	outString := ""
+	for _, row := range h.table {
+		// each row is a linked list
+		for _, element := range row.row {
+			outString += fmt.Sprintf("%v = %v\n", element.key, element.value)
+		}
+	}
+	return outString
+}
+
 // generate the hashed key and parse it based on the current size of
 // the hash table
 func getHashedKey(key string, len int, hashFunc func([]byte) [32]byte) int {
 	hash := hashFunc([]byte(key))
 	switch len {
 	case 8:
-		return int(hash[0]) % len
+		return int(math.Abs(float64(int(hash[0]) % len)))
 	case 16:
-		return int(binary.BigEndian.Uint16(hash[0:2])) % len
+		return int(math.Abs(float64(int(binary.BigEndian.Uint16(hash[0:2])) % len)))
 	case 32:
-		return int(binary.BigEndian.Uint32(hash[0:4])) % len
+		return int(math.Abs(float64(int(binary.BigEndian.Uint32(hash[0:4])) % len)))
 	default:
-		return int(binary.BigEndian.Uint64(hash[0:8])) % len
+		return int(math.Abs(float64(int(binary.BigEndian.Uint64(hash[0:8])) % len)))
 	}
 }
 
@@ -141,9 +155,9 @@ func getKey(key string, r *tableRow) (int, error) {
 // updates the value of a key if it exists and does nothing if
 // it doesn't exist
 func updateKey(key string, value int, r *tableRow) {
-	for _, e := range r.row {
+	for i, e := range r.row {
 		if e.key == key {
-			e.value = value
+			r.row[i].value = value
 		}
 	}
 }
