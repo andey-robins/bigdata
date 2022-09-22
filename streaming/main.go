@@ -42,7 +42,7 @@ func main() {
 		fmt.Println(" Args:")
 		fmt.Println("  -in       The relative path to the input file. Defaults to ./data.csv")
 		fmt.Println("  -out      The name of the desired output file. Omit this to print to standard output")
-		fmt.Println("  -full     Calculate the results for the entire file instead of a simulated stream")
+		fmt.Println("  -full     Calculate the counts for the entire file instead of a simulated stream")
 		fmt.Println("  -help     Display this help text :)")
 		pad()
 		return
