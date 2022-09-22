@@ -102,6 +102,18 @@ func (h *Hashtable) Get(key string) (int, error) {
 	}
 }
 
+func (h *Hashtable) Keys() []string {
+	keys := make([]string, 0)
+
+	for _, row := range h.table {
+		for _, element := range row.row {
+			keys = append(keys, element.key)
+		}
+	}
+
+	return keys
+}
+
 // Print will output the key and value for every existing entry in the table
 func (h *Hashtable) Print() string {
 	outString := ""
