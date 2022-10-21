@@ -51,7 +51,7 @@ func (ss *SentenceSimilarity) LoadFile(fname string) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		log.Fatalf("error reading file: %v\n", err)
+		log.Fatalf("error scanning file: %v\n", err)
 	}
 }
 
@@ -72,4 +72,9 @@ func (ss *SentenceSimilarity) CountDupes() int {
 	}
 
 	return dupes
+}
+
+// A Sentence is similar if any one deletion or one addition of a word creates a duplicate
+func (ss *SentenceSimilarity) CountSimilar() int {
+	return 0
 }
