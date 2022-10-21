@@ -76,12 +76,24 @@ func TestHashtable(t *testing.T) {
 		t.Errorf("key1 reported as existing, even though it doesn't")
 	}
 
+	// replace key1 and double check Exists works for buckets with collisions
+	h.Insert("key1", 1)
+	if !h.Exists("key3") {
+		t.Errorf("key3 reported as not existing, even though it does")
+	}
+	if !h.Exists("key1") {
+		t.Errorf("key1 reported as not existing, even though it does")
+	}
+
 	keys := h.Keys()
 	for i, key := range keys {
 		if i == 0 && key != "key2" {
 			t.Errorf("key2 not present in Keys()")
 		}
-		if i == 1 && key != "key3" {
+		if i == 1 && key != "key1" {
+			t.Errorf("key1 not present in Keys()")
+		}
+		if i == 2 && key != "key3" {
 			t.Errorf("key3 not present in Keys()")
 		}
 	}

@@ -14,9 +14,10 @@ func main() {
 
 	var in string
 	var help bool
-	var k int
+	var k, size int
 	flag.StringVar(&in, "in", "sentence_files/tiny.txt", "the input file path")
 	flag.IntVar(&k, "k", 0, "the distance count")
+	flag.IntVar(&size, "size", 1073741824, "the number of buckets for the hashtable")
 	flag.BoolVar(&help, "help", false, "use to display help text")
 	flag.Parse()
 
@@ -31,24 +32,25 @@ func main() {
 		fmt.Println(" Args:")
 		fmt.Println("  -in       The file name for password input. Defaults to sentence_files/tiny.txt")
 		fmt.Println("  -k        The distance measure. Defaults to 0")
+		fmt.Println("  -size     The number of buckets for the hashtable. Defaults to 2^30")
 		fmt.Println("  -help     Display this help text :)")
 		pad()
 		return
 	}
 
 	if k == 0 {
-		driver_0(in)
+		driver_0(in, size)
 	} else {
-		driver(in)
+		driver(in, size)
 	}
 }
 
-func driver(inFile string) {
+func driver(inFile string, size int) {
 	fmt.Println(inFile)
 }
 
-func driver_0(inFile string) {
-	ss := sentences.New()
+func driver_0(inFile string, size int) {
+	ss := sentences.New(size)
 	ss.LoadFile(inFile)
 	count := ss.CountDupes()
 	fmt.Printf("File '%s' has %v duplicate lines.\n", inFile, count)

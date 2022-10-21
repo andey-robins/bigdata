@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"crypto/sha256"
 	"log"
-	"math"
 	"os"
 
 	"github.com/andey-robins/bigdata/similarity/hashtable"
@@ -15,8 +14,8 @@ type SentenceSimilarity struct {
 	HashTable  *hashtable.Hashtable
 }
 
-func New() *SentenceSimilarity {
-	ht := hashtable.New(int(math.Pow(float64(2), float64(16))), sha256.Sum256)
+func New(size int) *SentenceSimilarity {
+	ht := hashtable.New(size, sha256.Sum256)
 	return &SentenceSimilarity{
 		Duplicates: 0,
 		HashTable:  ht,
@@ -35,12 +34,17 @@ func (ss *SentenceSimilarity) LoadFile(fname string) {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if ss.HashTable.Exists(line) {
-			oldVal, err := ss.HashTable.Get(line)
+			val, err := ss.HashTable.Get(line)
+
 			if err != nil {
-				// TODO recovery
 				panic(err)
 			}
-			ss.HashTable.Update(line, oldVal+1)
+
+			if val == 1 {
+				ss.Duplicates++
+			}
+
+			ss.HashTable.Update(line, 2)
 		} else {
 			err := ss.HashTable.Insert(line, 1)
 			if err != nil {
@@ -56,22 +60,7 @@ func (ss *SentenceSimilarity) LoadFile(fname string) {
 }
 
 func (ss *SentenceSimilarity) CountDupes() int {
-	dupes := 0
-
-	for _, e := range ss.HashTable.Keys() {
-
-		count, err := ss.HashTable.Get(e)
-		if err != nil {
-			// TODO recovery
-			panic(err)
-		}
-
-		if count != 1 {
-			dupes++
-		}
-	}
-
-	return dupes
+	return ss.Duplicates
 }
 
 // A Sentence is similar if any one deletion or one addition of a word creates a duplicate
