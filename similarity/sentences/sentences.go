@@ -2,7 +2,6 @@ package sentences
 
 import (
 	"bufio"
-	"crypto/sha256"
 	"log"
 	"os"
 
@@ -14,8 +13,8 @@ type SentenceSimilarity struct {
 	HashTable  *hashtable.Hashtable
 }
 
-func New(size int) *SentenceSimilarity {
-	ht := hashtable.New(size, sha256.Sum256)
+func New(size int, hash func() [32]byte) *SentenceSimilarity {
+	ht := hashtable.New(size, hash)
 	return &SentenceSimilarity{
 		Duplicates: 0,
 		HashTable:  ht,

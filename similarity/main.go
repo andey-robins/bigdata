@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/andey-robins/bigdata/similarity/hash"
 	"github.com/andey-robins/bigdata/similarity/sentences"
 )
 
@@ -50,7 +51,7 @@ func driver(inFile string, size int) {
 }
 
 func driver_0(inFile string, size int) {
-	ss := sentences.New(size)
+	ss := sentences.New(size, hash.Campbell5)
 	ss.LoadFile(inFile)
 	count := ss.CountDupes()
 	fmt.Printf("File '%s' has %v duplicate lines.\n", inFile, count)

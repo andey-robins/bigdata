@@ -2,8 +2,8 @@
 
 ## Data
 
-|File|Distance 0 Time|Distance 0 Count|Distance 1 Time|Distance 1 Count|-size|
-|----|---------------|----------------|---------------|----------------|-----|
+|File|Distance 0 Time|Distance 0 Count|Distance 1 Time|Distance 1 Count| -size |
+|----|---------------|----------------|---------------|----------------|-------|
 |tiny.txt|0.006|2|||20|
 |small.txt|0.005|1|||20|
 |100.txt|0.005|2||||100|
