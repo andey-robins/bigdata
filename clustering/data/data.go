@@ -1,8 +1,20 @@
 package data
 
+import "strconv"
+
 type TwoDimData struct {
 	X int `csv:"x"`
 	Y int `csv:"y"`
+}
+
+func NewTwoDimData(vals []string) *TwoDimData {
+	x, _ := strconv.Atoi(vals[0])
+	y, _ := strconv.Atoi(vals[1])
+
+	return &TwoDimData{
+		X: x,
+		Y: y,
+	}
 }
 
 func (d *TwoDimData) Serialize() []int {
