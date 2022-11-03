@@ -16,7 +16,7 @@ func Cluster2D(fname string) {
 
 	// initialize 10 clustroids with random points
 	// note, the points are randomized in the input
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < 100; i++ {
 		point := getNextPointList(dataStream)
 		centroid := NewClustroid(2)
 		centroid.AddPoint(point)
