@@ -2,6 +2,11 @@ package data
 
 import "strconv"
 
+type Dimensional interface {
+	TwoDimData
+	TenDimData
+}
+
 type TwoDimData struct {
 	X int `csv:"x"`
 	Y int `csv:"y"`
@@ -35,6 +40,32 @@ type TenDimData struct {
 	H int `csv:"h"`
 	I int `csv:"i"`
 	J int `csv:"j"`
+}
+
+func NewTenDimData(vals []string) *TenDimData {
+	a, _ := strconv.Atoi(vals[0])
+	b, _ := strconv.Atoi(vals[1])
+	c, _ := strconv.Atoi(vals[2])
+	d, _ := strconv.Atoi(vals[3])
+	e, _ := strconv.Atoi(vals[4])
+	f, _ := strconv.Atoi(vals[5])
+	g, _ := strconv.Atoi(vals[6])
+	h, _ := strconv.Atoi(vals[7])
+	i, _ := strconv.Atoi(vals[8])
+	j, _ := strconv.Atoi(vals[9])
+
+	return &TenDimData{
+		A: a,
+		B: b,
+		C: c,
+		D: d,
+		E: e,
+		F: f,
+		G: g,
+		H: h,
+		I: i,
+		J: j,
+	}
 }
 
 func (d *TenDimData) Serialize() []int {
