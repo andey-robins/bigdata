@@ -1,8 +1,9 @@
 package hashtable
 
 import (
-	"crypto/sha256"
 	"testing"
+
+	"github.com/andey-robins/bigdata/similarity/hash"
 )
 
 func TestHashtable(t *testing.T) {
@@ -11,7 +12,7 @@ func TestHashtable(t *testing.T) {
 	// they are handled properly. The proof there are collisions is by the
 	// pigeon-hole principle. We insert 3 unique keys into a hashtable with
 	// capacity of 2.
-	h := New(2, sha256.Sum256)
+	h := New(2, hash.Sha256Wrapper)
 
 	// check multiple insert happy paths
 	if err := h.Insert("key1", 1); err != nil {
@@ -90,11 +91,11 @@ func TestHashtable(t *testing.T) {
 		if i == 0 && key != "key2" {
 			t.Errorf("key2 not present in Keys()")
 		}
-		if i == 1 && key != "key1" {
-			t.Errorf("key1 not present in Keys()")
-		}
-		if i == 2 && key != "key3" {
+		if i == 1 && key != "key3" {
 			t.Errorf("key3 not present in Keys()")
+		}
+		if i == 2 && key != "key1" {
+			t.Errorf("key1 not present in Keys()")
 		}
 	}
 }

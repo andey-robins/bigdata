@@ -1,9 +1,10 @@
 package sentences
 
 import (
-	"crypto/sha256"
 	"os"
 	"testing"
+
+	"github.com/andey-robins/bigdata/similarity/hash"
 )
 
 func TestCountDupes(t *testing.T) {
@@ -11,7 +12,7 @@ func TestCountDupes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	ss := New(int(file.Size()/32), sha256.Sum256)
+	ss := New(int(file.Size()/32), hash.Sha256Wrapper)
 	ss.LoadFile("../sentence_files/tiny.txt") // this file has 2 duplicate sentences
 
 	count := ss.CountDupes()
@@ -23,7 +24,7 @@ func TestCountDupes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	ss = New(int(file.Size()/32), sha256.Sum256)
+	ss = New(int(file.Size()/32), hash.Sha256Wrapper)
 	ss.LoadFile("../sentence_files/small.txt") // this file has 1 duplicate sentence
 
 	count = ss.CountDupes()
@@ -31,7 +32,7 @@ func TestCountDupes(t *testing.T) {
 		t.Errorf("[Test 2] - got=%v, exp=%v\n", count, 1)
 	}
 
-	ss = New(1000, sha256.Sum256)
+	ss = New(1000, hash.Sha256Wrapper)
 	ss.LoadFile("../sentence_files/1k.txt") // this file has 1 duplicate sentence
 
 	count = ss.CountDupes()

@@ -2,7 +2,6 @@ package ngram
 
 import (
 	"fmt"
-	"log"
 	"testing"
 )
 
@@ -10,7 +9,6 @@ func TestNgrams(t *testing.T) {
 	ngrams := New(3, "asdfsdf")
 	// asd, sdf, dfs, fsd, sdf
 	if most := ngrams.NthFrequentGram(0); most != "sdf" {
-		log.Println(ngrams.grams_count)
 		t.Errorf("Most Frequent 3-gram is not 'sdf'. got=%v\n", most)
 	}
 

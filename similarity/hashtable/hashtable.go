@@ -5,11 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"math"
+
+	"github.com/andey-robins/bigdata/similarity/ngram"
 )
 
 type Hashtable struct {
 	table       []tableRow
-	hashFunc    func([]byte) [32]byte // sha256.Sum256 is a good default
+	hashFunc    func(gram *ngram.Ngram) [32]byte
 	truncLength int
 }
 
@@ -24,7 +26,7 @@ type tableElement struct {
 
 // New will create a new hashtable with a capacity approximately the size given as an
 // argument. The true size is the smallest power of 2 that is greater than the requested size
-func New(size int, hashFunc func([]byte) [32]byte) *Hashtable {
+func New(size int, hashFunc func(gram *ngram.Ngram) [32]byte) *Hashtable {
 	// find the smallest power of two range that nicely fits
 	// the requested size
 	for i := 3; i < 64; i++ {
@@ -102,6 +104,21 @@ func (h *Hashtable) Get(key string) (int, error) {
 	}
 }
 
+func (h *Hashtable) GetSimilarSentences() [][]string {
+	allStrings := make([][]string, 0)
+	for _, row := range h.table {
+		rowStrings := make([]string, 0)
+		if len(row.row) > 1 {
+			for _, key := range row.row {
+				rowStrings = append(rowStrings, key.key)
+			}
+		}
+		allStrings = append(allStrings, rowStrings)
+	}
+	return allStrings
+}
+
+// Keys returns a list of the keys in the hashtable
 func (h *Hashtable) Keys() []string {
 	keys := make([]string, 0)
 
@@ -128,8 +145,9 @@ func (h *Hashtable) Print() string {
 
 // generate the hashed key and parse it based on the current size of
 // the hash table
-func getHashedKey(key string, len int, hashFunc func([]byte) [32]byte) int {
-	hash := hashFunc([]byte(key))
+func getHashedKey(key string, len int, hashFunc func(gram *ngram.Ngram) [32]byte) int {
+	ngram := ngram.New(4, key)
+	hash := hashFunc(ngram)
 	switch len {
 	case 8:
 		return int(math.Abs(float64(int(hash[0]) % len)))

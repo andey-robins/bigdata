@@ -1,10 +1,12 @@
 package main
 
 import (
-	"crypto/sha256"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
 
+	"github.com/andey-robins/bigdata/similarity/hash"
 	"github.com/andey-robins/bigdata/similarity/sentences"
 )
 
@@ -14,12 +16,13 @@ func main() {
 	}
 
 	var in string
-	var help bool
+	var help, logging bool
 	var k, size int
 	flag.StringVar(&in, "in", "sentence_files/tiny.txt", "the input file path")
 	flag.IntVar(&k, "k", 0, "the distance count")
 	flag.IntVar(&size, "size", 1073741824, "the number of buckets for the hashtable")
 	flag.BoolVar(&help, "help", false, "use to display help text")
+	flag.BoolVar(&logging, "log", false, "use to enable logging")
 	flag.Parse()
 
 	if help {
@@ -34,9 +37,14 @@ func main() {
 		fmt.Println("  -in       The file name for password input. Defaults to sentence_files/tiny.txt")
 		fmt.Println("  -k        The distance measure. Defaults to 0")
 		fmt.Println("  -size     The number of buckets for the hashtable. Defaults to 2^30")
+		fmt.Println("  -log      Use this flag to enable logging output")
 		fmt.Println("  -help     Display this help text :)")
 		pad()
 		return
+	}
+
+	if !logging {
+		log.SetOutput(ioutil.Discard)
 	}
 
 	if k == 0 {
@@ -47,14 +55,14 @@ func main() {
 }
 
 func driver(inFile string, size int) {
-	ss := sentences.New(size, sha256.Sum256)
+	ss := sentences.New(size, hash.Campbell3)
 	ss.LoadFile(inFile)
 	count := ss.CountSimilar()
 	fmt.Printf("File '%s' has %v similar lines with distance 1.\n", inFile, count)
 }
 
 func driver_0(inFile string, size int) {
-	ss := sentences.New(size, sha256.Sum256)
+	ss := sentences.New(size, hash.Sha256Wrapper)
 	ss.LoadFile(inFile)
 	count := ss.CountDupes()
 	fmt.Printf("File '%s' has %v duplicate lines.\n", inFile, count)

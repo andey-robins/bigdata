@@ -6,14 +6,21 @@ import (
 	"os"
 
 	"github.com/andey-robins/bigdata/similarity/hashtable"
+	"github.com/andey-robins/bigdata/similarity/ngram"
 )
 
+// SentenceSimilarity is a wrapper object that is used to expose a sentence
+// database for counting similar words with specific edit distances
+// Duplicates is an exported int which is the number of edit distance 0 words in the input
+// HashTable is the mapping of words to times they appear
 type SentenceSimilarity struct {
 	Duplicates int
 	HashTable  *hashtable.Hashtable
 }
 
-func New(size int, hash func([]byte) [32]byte) *SentenceSimilarity {
+// New creates a new sentence similarity object with a hashtable of size `size` and
+// using a hashing algorithm of `hash`
+func New(size int, hash func(gram *ngram.Ngram) [32]byte) *SentenceSimilarity {
 	ht := hashtable.New(size, hash)
 	return &SentenceSimilarity{
 		Duplicates: 0,
@@ -21,6 +28,9 @@ func New(size int, hash func([]byte) [32]byte) *SentenceSimilarity {
 	}
 }
 
+// LoadFile takes in a filename as the argument fname and propogates the SentenceSimilarity
+// datastructure with the unique sentenes. Also counts duplicates along the way in
+// in linear time
 func (ss *SentenceSimilarity) LoadFile(fname string) {
 	file, err := os.Open(fname)
 	if err != nil {
@@ -58,11 +68,27 @@ func (ss *SentenceSimilarity) LoadFile(fname string) {
 	}
 }
 
+// CountDupes returns the number of perfect duplicates (i.e. edit distance of 0)
+// present within the hashtable
 func (ss *SentenceSimilarity) CountDupes() int {
 	return ss.Duplicates
 }
 
-// A Sentence is similar if any one deletion or one addition of a word creates a duplicate
+// CountSimilar determines if a sentence is similar if any one deletion
+// or one addition of a word creates a duplicate (i.e. edit distance of 1)
+// and returns the count of the number of sentences within edit distance 1
+// of another
 func (ss *SentenceSimilarity) CountSimilar() int {
-	return 0
+	count := 0
+	for _, row := range ss.HashTable.GetSimilarSentences() {
+		for i, s := range row {
+			for j := i + 1; j < len(row); j++ {
+				if EditDistance(s, row[j]) == 1 {
+					log.Printf("%v ~ %v\n", s, row[j])
+					count++
+				}
+			}
+		}
+	}
+	return count
 }
