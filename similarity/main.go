@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"github.com/andey-robins/bigdata/similarity/hash"
 	"github.com/andey-robins/bigdata/similarity/sentences"
@@ -56,14 +57,18 @@ func main() {
 
 func driver(inFile string, size int) {
 	ss := sentences.New(size, hash.Campbell3)
+	start := time.Now()
 	ss.LoadFile(inFile)
 	count := ss.CountSimilar()
 	fmt.Printf("File '%s' has %v similar lines with distance 1.\n", inFile, count)
+	fmt.Printf("Finished in %s\n", time.Since(start))
 }
 
 func driver_0(inFile string, size int) {
 	ss := sentences.New(size, hash.Sha256Wrapper)
+	start := time.Now()
 	ss.LoadFile(inFile)
 	count := ss.CountDupes()
 	fmt.Printf("File '%s' has %v duplicate lines.\n", inFile, count)
+	fmt.Printf("Finished in %s\n", time.Since(start))
 }
