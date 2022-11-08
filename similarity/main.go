@@ -1,10 +1,10 @@
 package main
 
 import (
+	"crypto/sha256"
 	"flag"
 	"fmt"
 
-	"github.com/andey-robins/bigdata/similarity/hash"
 	"github.com/andey-robins/bigdata/similarity/sentences"
 )
 
@@ -47,11 +47,14 @@ func main() {
 }
 
 func driver(inFile string, size int) {
-	fmt.Println(inFile)
+	ss := sentences.New(size, sha256.Sum256)
+	ss.LoadFile(inFile)
+	count := ss.CountSimilar()
+	fmt.Printf("File '%s' has %v similar lines with distance 1.\n", inFile, count)
 }
 
 func driver_0(inFile string, size int) {
-	ss := sentences.New(size, hash.Campbell5)
+	ss := sentences.New(size, sha256.Sum256)
 	ss.LoadFile(inFile)
 	count := ss.CountDupes()
 	fmt.Printf("File '%s' has %v duplicate lines.\n", inFile, count)

@@ -13,7 +13,7 @@ type SentenceSimilarity struct {
 	HashTable  *hashtable.Hashtable
 }
 
-func New(size int, hash func() [32]byte) *SentenceSimilarity {
+func New(size int, hash func([]byte) [32]byte) *SentenceSimilarity {
 	ht := hashtable.New(size, hash)
 	return &SentenceSimilarity{
 		Duplicates: 0,
