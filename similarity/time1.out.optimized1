@@ -1,0 +1,12 @@
+File 'sentence_files/tiny.txt' has 0 similar lines with distance 1.
+Finished in 184.375µs
+File 'sentence_files/small.txt' has 0 similar lines with distance 1.
+Finished in 694.75µs
+File 'sentence_files/100.txt' has 0 similar lines with distance 1.
+Finished in 8.14425ms
+File 'sentence_files/1K.txt' has 0 similar lines with distance 1.
+Finished in 268.46075ms
+File 'sentence_files/10K.txt' has 62 similar lines with distance 1.
+Finished in 23.425813792s
+File 'sentence_files/100K.txt' has 2938 similar lines with distance 1.
+Finished in 32m9.370448666s

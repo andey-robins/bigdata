@@ -93,13 +93,13 @@ func TestHashtable(t *testing.T) {
 	keys := h.Keys()
 	for i, key := range keys {
 		if i == 0 && key != "key2" {
-			t.Errorf("key2 not present in Keys()")
+			t.Errorf("key2 not present in Keys() got=%v", key)
 		}
-		if i == 1 && key != "key3" {
-			t.Errorf("key3 not present in Keys()")
+		if i == 1 && key != "key1" {
+			t.Errorf("key1 not present in Keys() got=%v", key)
 		}
-		if i == 2 && key != "key1" {
-			t.Errorf("key1 not present in Keys()")
+		if i == 2 && key != "key3" {
+			t.Errorf("key3 not present in Keys() got=%v", key)
 		}
 	}
 }
