@@ -84,7 +84,7 @@ func (ss *SentenceSimilarity) CountSimilar() int {
 	for _, row := range ss.HashTable.GetSimilarSentences() {
 		for i, s := range row {
 			for j := i + 1; j < len(row); j++ {
-				if EditDistance(s, row[j]) == 1 {
+				if isDistanceOne(s, row[j]) {
 					log.Printf("%v ~ %v\n", s, row[j])
 					count++
 				}
