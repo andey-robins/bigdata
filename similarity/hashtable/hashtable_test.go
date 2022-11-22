@@ -25,8 +25,8 @@ func TestHashtable(t *testing.T) {
 		t.Errorf("Unable to insert into hash table. err=%v", err)
 	}
 
-	if h.Collisions() != 2 {
-		t.Errorf("Incorrect number of collisions. exp=%v got=%v", 2, h.Collisions())
+	if h.Collisions() != 1 {
+		t.Errorf("Incorrect number of collisions. exp=%v got=%v", 1, h.Collisions())
 	}
 
 	// Check insert error paths
