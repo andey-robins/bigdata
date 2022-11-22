@@ -99,3 +99,7 @@ func (n *Ngram) Bytes() [32]byte {
 	copy(byteSlice[:], []byte(n.String()))
 	return byteSlice
 }
+
+func (n *Ngram) Sentence() string {
+	return n.sentence
+}

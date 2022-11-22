@@ -7,7 +7,7 @@ import (
 )
 
 func Sha256Wrapper(gram *ngram.Ngram) [32]byte {
-	bytes := gram.Bytes()
+	bytes := []byte(gram.Sentence())
 	return sha256.Sum256(bytes[:])
 }
 

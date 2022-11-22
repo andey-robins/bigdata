@@ -13,6 +13,7 @@ type Hashtable struct {
 	table       []tableRow
 	hashFunc    func(gram *ngram.Ngram) [32]byte
 	truncLength int
+	keyMap      map[string]bool
 }
 
 type tableRow struct {
@@ -44,6 +45,7 @@ func New(size int, hashFunc func(gram *ngram.Ngram) [32]byte) *Hashtable {
 	// greater than uint64 max size. in that case, default to uint64 size
 	h := &Hashtable{}
 	h.table = make([]tableRow, int(math.Pow(2, 64.0)))
+	// h.keyMap = make(map[string]bool)
 	h.truncLength = 64
 	h.hashFunc = hashFunc
 	return h
@@ -61,6 +63,7 @@ func (h *Hashtable) Insert(key string, value int) error {
 		return nil
 	}
 	h.table[addr].row = append(make([]tableElement, 0), tableElement{key, value})
+	// h.keyMap[key] = true
 	return nil
 }
 
@@ -129,6 +132,16 @@ func (h *Hashtable) Keys() []string {
 	}
 
 	return keys
+}
+
+func (h *Hashtable) Collisions() int {
+	collisions := 0
+	for _, row := range h.table {
+		if len(row.row) > 1 {
+			collisions += len(row.row) - 1
+		}
+	}
+	return collisions
 }
 
 // Print will output the key and value for every existing entry in the table

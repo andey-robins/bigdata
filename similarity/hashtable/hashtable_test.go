@@ -25,6 +25,10 @@ func TestHashtable(t *testing.T) {
 		t.Errorf("Unable to insert into hash table. err=%v", err)
 	}
 
+	if h.Collisions() != 2 {
+		t.Errorf("Incorrect number of collisions. exp=%v got=%v", 2, h.Collisions())
+	}
+
 	// Check insert error paths
 	if err := h.Insert("key3", 30); err == nil {
 		t.Errorf("Tried to insert with an existing key, expected an error")
