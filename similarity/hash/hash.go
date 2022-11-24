@@ -2,6 +2,7 @@ package hash
 
 import (
 	"crypto/sha256"
+	"fmt"
 
 	"github.com/andey-robins/bigdata/similarity/ngram"
 )
@@ -16,5 +17,11 @@ func Campbell3(gram *ngram.Ngram) [32]byte {
 }
 
 func Campbell4(gram *ngram.Ngram) [32]byte {
-	return gram.Cambell4Hash()
+	fmt.Println(gram.Campbell4Hash())
+	return gram.Campbell4Hash()
+}
+
+func Campbell5(gram *ngram.Ngram) [32]byte {
+	// fmt.Println(gram.Campbell5Hash())
+	return gram.Campbell5Hash()
 }

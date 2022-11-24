@@ -19,23 +19,28 @@ type Ngram struct {
 
 	c4hash      [32]byte
 	c4hashValid bool
+	c5hash      [32]byte
+	c5hashValid bool
 }
 
 // New creates a new n, ngram over string s and fills in the appropriate data struct
 func New(n int, s string) *Ngram {
 	grams := make([]string, 0)
 	gramsCount := make(map[string]int, 0)
-	var array [32]byte
+	var array4, array5 [32]byte
 	slice := make([]byte, 32)
-	copy(array[:], slice)
+	copy(array4[:], slice)
+	copy(array5[:], slice)
 	return &Ngram{
 		n:            n,
 		sentence:     strings.ReplaceAll(s, " ", ""),
 		grams:        grams,
 		gramsCount:   gramsCount,
 		gramsOrdered: false,
-		c4hash:       array,
+		c4hash:       array4,
 		c4hashValid:  false,
+		c5hash:       array5,
+		c5hashValid:  false,
 	}
 }
 
@@ -96,11 +101,15 @@ func (n *Ngram) NthRareGram(i int) string {
 // NSpacedRareGrams will return the i rarest ngrams that are at least spacing
 // edit distance apart from each other
 func (n *Ngram) NSpacedRareGrams(spacing, i int) []string {
-	grams := make([]string, 0)
+	// memoize the frequency calculations
+	if !n.gramsOrdered {
+		n.CalculateGrams()
+	}
 
+	grams := make([]string, 0)
 	idx := 0
 	// iterate through our grams until we fill a list with sufficiently spaced ngrams
-	for len(grams) < i && len(n.grams) < idx {
+	for len(grams) < i && idx < len(n.grams) {
 		nextGram := n.NthRareGram(idx)
 		goodGram := true
 
@@ -193,7 +202,7 @@ func (n *Ngram) ngramDistance(g1, g2 string) int {
 	return int(math.Abs(float64(dist))) - len(g1)
 }
 
-func (n *Ngram) Cambell4Hash() [32]byte {
+func (n *Ngram) Campbell4Hash() [32]byte {
 	if n.c4hashValid {
 		return n.c4hash
 	}
@@ -207,4 +216,27 @@ func (n *Ngram) Cambell4Hash() [32]byte {
 	copy(n.c4hash[:], byteSlice)
 	n.c4hashValid = true
 	return n.c4hash
+}
+
+func (n *Ngram) Campbell5Hash() [32]byte {
+	if n.c5hashValid {
+		return n.c5hash
+	}
+
+	byteSlice := make([]byte, 0)
+	grams := n.NSpacedRareGrams(3, 8)
+	for _, gram := range grams {
+		gramBytes := []byte(gram)
+		byteSlice = append(byteSlice, gramBytes...)
+	}
+
+	idx := 0
+	for len(byteSlice) > 0 && byteSlice[len(byteSlice)-1] == 0 && idx < len(n.grams) {
+		byteSlice = append(byteSlice, []byte(n.NthFrequentGram(idx))...)
+		idx++
+	}
+
+	copy(n.c5hash[:], byteSlice)
+	n.c5hashValid = true
+	return n.c5hash
 }

@@ -57,15 +57,15 @@ func main() {
 			fname string
 			size  int
 		}{
-			// {"sentence_files/tiny.txt", 100},
-			// {"sentence_files/small.txt", 100},
-			// {"sentence_files/100.txt", 100},
-			// {"sentence_files/1K.txt", 1_000},
+			{"sentence_files/tiny.txt", 100},
+			{"sentence_files/small.txt", 100},
+			{"sentence_files/100.txt", 100},
+			{"sentence_files/1K.txt", 1_000},
 			{"sentence_files/10K.txt", 10_000},
 			{"sentence_files/100K.txt", 100_000},
-			// {"sentence_files/1M.txt", 1_000_000},
-			// {"sentence_files/5M.txt", 5_000_000},
-			// {"sentence_files/25M.txt", 25_000_000},
+			{"sentence_files/1M.txt", 1_000_000},
+			{"sentence_files/5M.txt", 5_000_000},
+			{"sentence_files/25M.txt", 25_000_000},
 		}
 
 		for _, exp := range experiments {
@@ -94,7 +94,7 @@ func main() {
 }
 
 func driver(inFile string, size int) {
-	ss := sentences.New(size, hash.Campbell4)
+	ss := sentences.New(size, hash.Campbell5)
 	start := time.Now()
 	ss.LoadFile(inFile)
 	count := ss.CountSimilar()
