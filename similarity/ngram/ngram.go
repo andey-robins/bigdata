@@ -16,18 +16,26 @@ type Ngram struct {
 	grams []string
 	// a flag to identify if the grams slice is ordered
 	gramsOrdered bool
+
+	c4hash      [32]byte
+	c4hashValid bool
 }
 
 // New creates a new n, ngram over string s and fills in the appropriate data struct
 func New(n int, s string) *Ngram {
 	grams := make([]string, 0)
 	gramsCount := make(map[string]int, 0)
+	var array [32]byte
+	slice := make([]byte, 32)
+	copy(array[:], slice)
 	return &Ngram{
 		n:            n,
 		sentence:     strings.ReplaceAll(s, " ", ""),
 		grams:        grams,
 		gramsCount:   gramsCount,
 		gramsOrdered: false,
+		c4hash:       array,
+		c4hashValid:  false,
 	}
 }
 
@@ -92,7 +100,7 @@ func (n *Ngram) NSpacedRareGrams(spacing, i int) []string {
 
 	idx := 0
 	// iterate through our grams until we fill a list with sufficiently spaced ngrams
-	for len(grams) < i {
+	for len(grams) < i && len(n.grams) < idx {
 		nextGram := n.NthRareGram(idx)
 		goodGram := true
 
@@ -183,4 +191,20 @@ func (n *Ngram) ngramDistance(g1, g2 string) int {
 	}
 
 	return int(math.Abs(float64(dist))) - len(g1)
+}
+
+func (n *Ngram) Cambell4Hash() [32]byte {
+	if n.c4hashValid {
+		return n.c4hash
+	}
+
+	var byteSlice []byte
+	grams := n.NSpacedRareGrams(3, 8)
+	for _, gram := range grams {
+		gramBytes := []byte(gram)
+		byteSlice = append(byteSlice, gramBytes...)
+	}
+	copy(n.c4hash[:], byteSlice)
+	n.c4hashValid = true
+	return n.c4hash
 }

@@ -23,7 +23,7 @@ func main() {
 	var k, size int
 	flag.StringVar(&in, "in", "sentence_files/tiny.txt", "the input file path")
 	flag.IntVar(&k, "k", 0, "the distance count")
-	flag.IntVar(&size, "size", 1073741824, "the number of buckets for the hashtable")
+	flag.IntVar(&size, "size", 1_000_000, "the number of buckets for the hashtable")
 	flag.BoolVar(&help, "help", false, "use to display help text")
 	flag.BoolVar(&logging, "log", false, "use to enable logging")
 	flag.BoolVar(&experiment, "exp", false, "use to run full experiment")
@@ -40,7 +40,7 @@ func main() {
 		fmt.Println(" Args:")
 		fmt.Println("  -in       The file name for password input. Defaults to sentence_files/tiny.txt")
 		fmt.Println("  -k        The distance measure. Defaults to 0")
-		fmt.Println("  -size     The number of buckets for the hashtable. Defaults to 2^30")
+		fmt.Println("  -size     The number of buckets for the hashtable. Defaults to 1M")
 		fmt.Println("  -log      Use this flag to enable logging output")
 		fmt.Println("  -exp      Use this flag to run through all files for experiment with k flag value")
 		fmt.Println("  -help     Display this help text :)")
@@ -57,15 +57,15 @@ func main() {
 			fname string
 			size  int
 		}{
-			{"sentence_files/tiny.txt", 100},
-			{"sentence_files/small.txt", 100},
-			{"sentence_files/100.txt", 100},
-			{"sentence_files/1K.txt", 1_000},
+			// {"sentence_files/tiny.txt", 100},
+			// {"sentence_files/small.txt", 100},
+			// {"sentence_files/100.txt", 100},
+			// {"sentence_files/1K.txt", 1_000},
 			{"sentence_files/10K.txt", 10_000},
 			{"sentence_files/100K.txt", 100_000},
-			{"sentence_files/1M.txt", 1_000_000},
-			{"sentence_files/5M.txt", 5_000_000},
-			{"sentence_files/25M.txt", 25_000_000},
+			// {"sentence_files/1M.txt", 1_000_000},
+			// {"sentence_files/5M.txt", 5_000_000},
+			// {"sentence_files/25M.txt", 25_000_000},
 		}
 
 		for _, exp := range experiments {
@@ -94,7 +94,7 @@ func main() {
 }
 
 func driver(inFile string, size int) {
-	ss := sentences.New(size, hash.Campbell3)
+	ss := sentences.New(size, hash.Campbell4)
 	start := time.Now()
 	ss.LoadFile(inFile)
 	count := ss.CountSimilar()
