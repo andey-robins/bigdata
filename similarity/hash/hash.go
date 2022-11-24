@@ -14,3 +14,15 @@ func Sha256Wrapper(gram *ngram.Ngram) [32]byte {
 func Campbell3(gram *ngram.Ngram) [32]byte {
 	return gram.Bytes()
 }
+
+func Campbell4(gram *ngram.Ngram) [32]byte {
+	var byteSlice []byte
+	var byteArray [32]byte
+	grams := gram.NSpacedRareGrams(3, 8)
+	for _, gram := range grams {
+		gramBytes := []byte(gram)
+		byteSlice = append(byteSlice, gramBytes...)
+	}
+	copy(byteArray[:], byteSlice)
+	return byteArray
+}

@@ -35,3 +35,47 @@ func TestNgrams(t *testing.T) {
 		t.Errorf("Wrong byte slice calculated for ngram")
 	}
 }
+
+func TestNgramEditDistance(t *testing.T) {
+	grams := []struct {
+		g1   string
+		g2   string
+		dist int
+	}{
+		{"asdf", "asd", 1},
+		{"asdf", "asfg", 2},
+		{"abc", "xyz", 6},
+		{"abcd", "cdba", 4},
+	}
+
+	for i, gram := range grams {
+		calculatedDist := ngramEditDistance(gram.g1, gram.g2)
+		if calculatedDist != gram.dist {
+			t.Errorf("[Test %v] - ngramDistance failed. got=%v exp=%v\n", i, calculatedDist, gram.dist)
+		}
+	}
+}
+
+func TestNgramDistance(t *testing.T) {
+	grams := New(3, "abcdefghijkl")
+	tests := []struct {
+		g1   string
+		g2   string
+		dist int
+	}{
+		{"abc", "efg", 1},
+		{"abc", "bcd", 0},
+		{"abc", "def", 0},
+		{"abc", "jkl", 6},
+		{"abc", "xyz", -1},
+	}
+
+	for i, test := range tests {
+		if val := grams.ngramDistance(test.g1, test.g2); val != test.dist {
+			t.Errorf("[Test %v] - ngram distance between grams was wrong. got=%v exp=%v", i, val, test.dist)
+		}
+		if val := grams.ngramDistance(test.g2, test.g1); val != test.dist {
+			t.Errorf("[Test %v'] - ngram distance between grams was wrong. got=%v exp=%v", i, val, test.dist)
+		}
+	}
+}

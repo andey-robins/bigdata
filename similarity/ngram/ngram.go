@@ -1,6 +1,7 @@
 package ngram
 
 import (
+	"math"
 	"sort"
 	"strings"
 )
@@ -84,6 +85,33 @@ func (n *Ngram) NthRareGram(i int) string {
 	return n.grams[len(n.grams)-1-i]
 }
 
+// NSpacedRareGrams will return the i rarest ngrams that are at least spacing
+// edit distance apart from each other
+func (n *Ngram) NSpacedRareGrams(spacing, i int) []string {
+	grams := make([]string, 0)
+
+	idx := 0
+	// iterate through our grams until we fill a list with sufficiently spaced ngrams
+	for len(grams) < i {
+		nextGram := n.NthRareGram(idx)
+		goodGram := true
+
+		for _, gram := range grams {
+			if n.ngramDistance(nextGram, gram) < spacing {
+				goodGram = false
+			}
+		}
+
+		if goodGram {
+			grams = append(grams, nextGram)
+		}
+
+		idx++
+	}
+
+	return grams
+}
+
 // String will get a string representation of the ngram hash
 func (n *Ngram) String() string {
 	s := ""
@@ -102,4 +130,57 @@ func (n *Ngram) Bytes() [32]byte {
 
 func (n *Ngram) Sentence() string {
 	return n.sentence
+}
+
+// adapted for words and sentences from the code here:
+// https://golangbyexample.com/edit-distance-two-strings-golang/
+func ngramEditDistance(g1, g2 string) int {
+	lenGram1 := len(g1)
+	lenGram2 := len(g2)
+
+	editDistanceMatrix := make([][]int, lenGram1+1)
+
+	for i := range editDistanceMatrix {
+		editDistanceMatrix[i] = make([]int, lenGram2+1)
+	}
+
+	for i := 1; i <= lenGram2; i++ {
+		editDistanceMatrix[0][i] = i
+	}
+
+	for i := 1; i <= lenGram1; i++ {
+		editDistanceMatrix[i][0] = i
+	}
+	for i := 1; i <= lenGram1; i++ {
+		for j := 1; j <= lenGram2; j++ {
+
+			if g1[i-1] == g2[j-1] {
+				editDistanceMatrix[i][j] = editDistanceMatrix[i-1][j-1]
+			} else {
+				// modified here to not count a replace as a distance of 1
+				editDistanceMatrix[i][j] = 1 + int(math.Min(float64(editDistanceMatrix[i-1][j]), float64(editDistanceMatrix[i][j-1])))
+			}
+		}
+	}
+	return editDistanceMatrix[lenGram1][lenGram2]
+}
+
+// ngramDistance will calculate the distance between two ngrams
+// returns -1 if one of the ngrams isn't found (we never expect
+// this to happen with current use cases, so something must have gone wrong)
+// returns 0 if there is an overlap
+func (n *Ngram) ngramDistance(g1, g2 string) int {
+	g1Idx := strings.Index(n.sentence, g1)
+	g2Idx := strings.Index(n.sentence, g2)
+
+	if g1Idx == -1 || g2Idx == -1 {
+		return -1
+	}
+
+	dist := g1Idx - g2Idx
+	if int(math.Abs(float64(dist))) < len(g1) {
+		return 0
+	}
+
+	return int(math.Abs(float64(dist))) - len(g1)
 }
