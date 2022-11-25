@@ -2,7 +2,6 @@ package sentences
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 
@@ -72,7 +71,6 @@ func (ss *SentenceSimilarity) LoadFile(fname string) {
 // CountDupes returns the number of perfect duplicates (i.e. edit distance of 0)
 // present within the hashtable
 func (ss *SentenceSimilarity) CountDupes() int {
-	fmt.Printf("collisions=%v\n", ss.HashTable.Collisions())
 	return ss.Duplicates
 }
 
@@ -92,6 +90,5 @@ func (ss *SentenceSimilarity) CountSimilar() int {
 			}
 		}
 	}
-	fmt.Printf("collisions=%v\n", ss.HashTable.Collisions())
 	return count
 }
